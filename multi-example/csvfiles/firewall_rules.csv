@@ -1,0 +1,6 @@
+﻿name,src_zones,src_networks,dst_zones,dst_networks,services,description,position,after_rulename,action,log,status
+DNS allow,LAN,Any,WAN,Any,DNS,DNS allow rule,top,,accept,enable,enable
+LAN to DMZ,LAN,LAN_192.168.1.0/24,DMZ,DMZ_10.10.10.0/24,HTTPS,LAN to DMZ allow,after,DNS allow,accept,enable,enable
+Guest to Internet,Guest,Guest_192.168.2.0/24,WAN,Internet IPv4 group,HTTPS,Guest to Internet allow,after,LAN to DMZ,accept,enable,enable
+WiFi to Internet,WiFi,WiFi_172.16.16.0/24,WAN,Internet IPv4 group,HTTPS,WiFi to Internet,after,Guest to Internet,accept,enable,enable
+LAN to SaaS,LAN,LAN_192.168.1.0/24,WAN,"*.office365micro.com, *.sophos.com",HTTPS,LAN to SaaS,after,WiFi to Internet,accept,enable,enable

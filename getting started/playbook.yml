@@ -1,0 +1,16 @@
+- name: MANAGE IP HOST ON SOPHOS FIREWALL
+  hosts: testfirewalls
+  gather_facts: false
+
+  tasks:
+    - name: MANAGE IP HOST
+      sophos.sophos_firewall.sfos_ip_host:
+        username: "{{ username }}"
+        password: "{{ password }}"
+        hostname: "{{ inventory_hostname }}"
+        port: 4444
+        verify: false
+        name: testhost1ansible
+        ip_address: 1.1.1.1
+        state: present
+      delegate_to: localhost

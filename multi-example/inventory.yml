@@ -1,0 +1,7 @@
+testfirewalls:
+  hosts:
+    172.16.16.16:
+      ansible_connection: local
+  #vars:
+    #username: admin
+    #password: Admin@12345
