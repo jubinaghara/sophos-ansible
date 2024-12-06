@@ -1,0 +1,41 @@
+---
+- name: Manage Firewall Rules on Sophos Firewall
+  hosts: testfirewalls
+  gather_facts: false
+
+  vars_files:
+    - vars/secrets.yml  # Path to your secrets file
+
+  tasks:
+    # Task to read firewall rule data from CSV
+    - name: Read Firewall Rule configuration from CSV
+      community.general.read_csv:
+        path: csvfiles/firewall_rules.csv  # Path to your CSV file
+        delimiter: ','
+      register: firewall_data_rules
+
+    # Task to create Firewall Rules on the Sophos Firewall
+    - name: Create Firewall Rules on Firewall
+      sophos.sophos_firewall.sfos_firewall_rule:
+        username: "{{ username }}"
+        password: "{{ password }}"
+        hostname: "{{ inventory_hostname }}"
+        port: 4444
+        verify: false
+        name: "{{ item.name }}"
+        description: "{{ item.description }}"
+        position: "{{ item.position }}"
+        after_rulename: "{{ item.after_rulename }}"
+        action: "{{ item.action }}"
+        log: "{{ item.log }}"
+        status: "{{ item.status }}"
+        src_zones: "{{ item.src_zones.split(',') }}"
+        dst_zones: "{{ item.dst_zones.split(',') }}"
+        src_networks: "{{ item.src_networks.split(',') }}"
+        dst_networks: "{{ item.dst_networks.split(',') }}"
+        service_list: "{{ item.services.split(',') }}"
+        state: present
+      loop: "{{ firewall_data_rules.list }}"
+      loop_control:
+        loop_var: item
+      delegate_to: localhost

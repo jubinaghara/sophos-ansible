@@ -1,0 +1,33 @@
+---
+- name: Manage Zone Host on Sophos Firewall
+  hosts: testfirewalls
+  gather_facts: false
+
+  vars_files:
+    - vars/secrets.yml  # Path to your secrets file
+
+  tasks:
+    # Task to read IP Host data from CSV
+    - name: Read Zone configuration from CSV
+      community.general.read_csv:
+        path: csvfiles/zone.csv  # Path to your CSV file
+        delimiter: ','
+      register: firewall_data_zone
+
+    # Task to create Zones on the firewall
+    - name: Create Zone on Firewall
+      sophos.sophos_firewall.sfos_zone:
+        username: "{{ username }}"
+        password: "{{ password }}"
+        hostname: "{{ inventory_hostname }}"
+        port: 4444
+        verify: false
+        name: "{{ item.name }}"
+        zone_type: "{{item.zone_type}}"
+        https: Enable
+        ssh: Enable
+        state: present
+      loop: "{{ firewall_data_zone.list }}"
+      loop_control:
+        loop_var: item
+      delegate_to: localhost

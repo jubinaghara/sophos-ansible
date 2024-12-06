@@ -1,0 +1,31 @@
+---
+- name: Manage FQDN Hosts on Sophos Firewall
+  hosts: testfirewalls
+  gather_facts: false
+
+  vars_files:
+    - vars/secrets.yml  # Path to your secrets file
+
+  tasks:
+    # Task to read IP Host data from CSV
+    - name: Read IP Host configuration from CSV
+      community.general.read_csv:
+        path: csvfiles/fqdnhosts.csv  # Path to your CSV file
+        delimiter: ','
+      register: firewall_data_fqdn
+
+    # Task to create IP Hosts on the firewall
+    - name: Create FQDN Hosts on Firewall
+      sophos.sophos_firewall.sfos_fqdn_host:
+        username: "{{ username }}"
+        password: "{{ password }}"
+        hostname: "{{ inventory_hostname }}"
+        port: 4444
+        verify: false
+        name: "{{ item.name }}"
+        fqdn: "{{ item.fqdn }}"
+        state: present
+      loop: "{{ firewall_data_fqdn.list }}"
+      loop_control:
+        loop_var: item
+      delegate_to: localhost

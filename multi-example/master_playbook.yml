@@ -1,0 +1,6 @@
+# - import_playbook: objects.yml
+# - import_playbook: fqdns.yml
+# - import_playbook: zones.yml
+- import_playbook: firewallrules.yml
+# - import_playbook: users.yml
+# - import_playbook: dns.yml
